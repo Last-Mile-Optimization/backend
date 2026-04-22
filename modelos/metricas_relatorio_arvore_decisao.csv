@@ -1,0 +1,27 @@
+﻿Cenario,Metrica,Valor
+Limiar padrao (0.5),Accuracy,0.8776
+Limiar padrao (0.5),Precision macro,0.5893
+Limiar padrao (0.5),Recall macro,0.655
+Limiar padrao (0.5),F1 macro,0.6084
+Limiar padrao (0.5),Precision weighted,0.9148
+Limiar padrao (0.5),Recall weighted,0.8776
+Limiar padrao (0.5),F1 weighted,0.8939
+Limiar padrao (0.5),Precision classe 0,0.2193
+Limiar padrao (0.5),Recall classe 0,0.402
+Limiar padrao (0.5),F1 classe 0,0.2837
+Limiar padrao (0.5),Precision classe 1,0.9594
+Limiar padrao (0.5),Recall classe 1,0.9081
+Limiar padrao (0.5),F1 classe 1,0.9331
+Limiar ajustado (0.22),Accuracy,0.8776
+Limiar ajustado (0.22),Precision macro,0.5893
+Limiar ajustado (0.22),Recall macro,0.655
+Limiar ajustado (0.22),F1 macro,0.6084
+Limiar ajustado (0.22),Precision weighted,0.9148
+Limiar ajustado (0.22),Recall weighted,0.8776
+Limiar ajustado (0.22),F1 weighted,0.8939
+Limiar ajustado (0.22),Precision classe 0,0.2193
+Limiar ajustado (0.22),Recall classe 0,0.402
+Limiar ajustado (0.22),F1 classe 0,0.2837
+Limiar ajustado (0.22),Precision classe 1,0.9594
+Limiar ajustado (0.22),Recall classe 1,0.9081
+Limiar ajustado (0.22),F1 classe 1,0.9331
