@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Dashboard - TCC IA</title>
+    <style>
+        :root {
+            --bg-dark: #0d1117;
+            --bg-card: #161b22;
+            --border: #30363d;
+            --text: #c9d1d9;
+            --bright: #f0f6fc;
+            --blue: #58a6ff;
+            --green: #3fb950;
+            --yellow: #d29922;
+            --red: #f85149;
+        }
+
+        body {
+            font-family: Arial;
+            background: #0d1117;
+            color: #c9d1d9;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        /* Navbar & Tabs */
+        .navbar {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #8b949e;
+            border-radius: 6px 6px 0 0;
+            font-size: 0.9rem;
+            border: 1px solid transparent;
+        }
+
+        .tab.active {
+            background-color: var(--bg-dark);
+            color: var(--blue);
+            border: 1px solid var(--border);
+            border-bottom: 2px solid var(--blue);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card #img1 {
+            width: 70%;
+        }
+
+        .card #img2,
+        .card #img3 {
+            width: 35%;
+        }
+
+        .card #img-grafico-1,
+        .card #img-grafico-2 {
+            width: 50%;
+            margin-top: 1rem;
+        }
+
+        h2 {
+            border-left: 4px solid #58a6ff;
+            padding-left: 10px;
+        }
+
+        .variable-box {
+            background: #0d1117;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #30363d;
+            text-align: left;
+        }
+
+        th {
+            background: #21262d;
+        }
+
+        .best {
+            background: #132a13;
+            color: #3fb950;
+            font-weight: bold;
+        }
+
+        .bad {
+            background: #2a1313;
+            color: #f85149;
+        }
+
+        .card {
+            background: #161b22;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div style="font-weight: bold; color: var(--bright);">💠 NEXUS DASHBOARD | IA & LOGÍSTICA</div>
+        <div class="nav-tabs">
+            <a href="#" class="tab">PCA</a>
+            <a href="#" class="tab active">Regressão Múltipla</a>
+            <a href="#" class="tab">Árvore / Confusão</a>
+            <a href="#" class="tab">Random Forest</a>
+            <a href="#" class="tab">XGBoost</a>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <div class="card">
+            <h2>Objetivo</h2>
+            <p>Descobrir quantos dias o produto demora para chegar ao cliente após a compra, considerando fatores
+                logísticos e climáticos.</p>
+
+            <h3>Variáveis Independentes</h3>
+            <div class="variable-box">
+                ['price', 'product_weight_g', 'distance_km',
+                'seller_total_rainfall_period_mm',
+                'seller_max_wind_gust_period_ms',
+                'customer_total_rainfall_period_mm',
+                'customer_max_wind_gust_period_ms',
+                'seller_accumulated_rainfall_3_days_mm',
+                'customer_accumulated_rainfall_3_days_mm']
+            </div>
+
+            <p><strong>Variável dependente:</strong> delivery_time_days</p>
+        </div>
+
+        <div class="card">
+            <h2>Comparativo de Performance por Split</h2>
+
+            <h3>75% Treino / 25% Teste</h3>
+            <table>
+                <tr>
+                    <th>Modelo</th>
+                    <th>R² Teste</th>
+                    <th>MAE</th>
+                    <th>RMSE</th>
+                    <th>MAPE</th>
+                </tr>
+                <tr>
+                <tr>
+                    <td>Log-Log</td>
+                    <td>0.1439</td>
+                    <td class="bad">3.71</td>
+                    <td>6.02</td>
+                    <td>61.11%</td>
+                </tr>
+                <td>Linear</td>
+                <td>0.0862</td>
+                <td>3.60</td>
+                <td>5.59</td>
+                <td>64.94%</td>
+                </tr>
+            </table>
+
+            <h3>60% / 20% / 20%</h3>
+            <table>
+                <tr>
+                    <th>Modelo</th>
+                    <th>R² Teste</th>
+                    <th>MAE</th>
+                    <th>RMSE</th>
+                    <th>MAPE</th>
+                </tr>
+                <tr>
+                    <td>Linear</td>
+                    <td>0.0881</td>
+                    <td>3.62</td>
+                    <td>5.65</td>
+                    <td>67.28%</td>
+                </tr>
+                <tr>
+                    <td>Log-Log</td>
+                    <td>0.1576</td>
+                    <td>3.68</td>
+                    <td>6.07</td>
+                    <td>57.72%</td>
+                </tr>
+            </table>
+
+            <h3>70% / 15% / 15% (MELHOR MODELO)</h3>
+            <table>
+                <tr>
+                    <th>Modelo</th>
+                    <th>R² Teste</th>
+                    <th>MAE</th>
+                    <th>RMSE</th>
+                    <th>MAPE</th>
+                </tr>
+                <tr>
+                    <td>Linear</td>
+                    <td>0.0846</td>
+                    <td>3.61</td>
+                    <td>5.70</td>
+                    <td>65.77%</td>
+                </tr>
+                <tr class="best">
+                    <td>Log-Log</td>
+                    <td>0.1407</td>
+                    <td>3.61</td>
+                    <td>5.97</td>
+                    <td>55.28%</td>
+                </tr>
+            </table>
+
+            <h3>80% / 10% / 10%</h3>
+            <table>
+                <tr>
+                    <th>Modelo</th>
+                    <th>R² Teste</th>
+                    <th>MAE</th>
+                    <th>RMSE</th>
+                    <th>MAPE</th>
+                </tr>
+                <tr>
+                    <td>Linear</td>
+                    <td>0.0844</td>
+                    <td>3.60</td>
+                    <td>5.59</td>
+                    <td>64.94%</td>
+                </tr>
+                <tr class="bad">
+                    <td>Log-Log</td>
+                    <td>0.1358</td>
+                    <td>3.71</td>
+                    <td>6.02</td>
+                    <td>61.11%</td>
+                </tr>
+            </table>
+
+            <p><strong>Insight chave:</strong> O split 70/15/15 apresenta o melhor equilíbrio entre generalização e
+                erro, evitando overfitting observado no 80/10/10.</p>
+
+        </div>
+
+        <div class="card">
+            <h2>Testes com Diferentes Divisões</h2>
+
+            <h3>60 / 20 / 20</h3>
+            <p>Log apresentou melhor desempenho (R² teste: 0.1576)</p>
+
+            <h3>70 / 15 / 15 (Melhor resultado)</h3>
+            <ul>
+                <li>MAE Teste: <strong>3.61 dias</strong></li>
+                <li>MAPE: <strong>55.28%</strong></li>
+                <li>Maior estabilidade entre treino, validação e teste</li>
+            </ul>
+
+            <h3>80 / 10 / 10</h3>
+            <p>Apresentou overfitting (erro alto na validação).</p>
+        </div>
+
+        <div class="card">
+            <h2>Avaliação do Modelo</h2>
+
+            <h3>Valores Reais vs Previstos</h3>
+            <p>Mostra o quão próximo o modelo chega dos valores reais. Quanto mais próximo da linha ideal, melhor o
+                modelo.</p>
+            <img id="img-grafico-1" src="imagens/regressao-linear/valores-reais-vs-valores-previstos.png" class="project-img">
+
+            <h3>Gráfico de Resíduos</h3>
+            <p>Mostra os erros do modelo. A presença de erros altos indica dificuldade em prever casos extremos.</p>
+            <img id="img-grafico-2" src="imagens/regressao-linear/residuos.png" class="project-img">
+        </div>
+
+        <div class="card">
+            <h2>Problema do Modelo</h2>
+            <p>
+                O modelo não consegue prever atrasos extremos.
+                Mesmo quando uma entrega leva 40–60 dias, ele prevê cerca de 10 dias.
+            </p>
+
+            <ul>
+                <li>Subestimação de valores altos</li>
+                <li>Grande erro em outliers</li>
+                <li>Distribuição de erro assimétrica</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Análise dos Fatores</h2>
+
+            <h3>Chuva vs Tempo</h3>
+            <p>Impacto pequeno. Não explica atrasos extremos.</p>
+            <img id="img1" src="imagens/regressao-linear/chuva.png" class="project-img">
+
+            <h3>Peso vs Tempo</h3>
+            <p>Correlação positiva, mas não determinante.</p>
+            <img id="img2" src="imagens/regressao-linear/peso.png" class="project-img">
+
+            <h3>Distância vs Tempo</h3>
+            <p>Fator mais relevante. Relação clara com tempo de entrega.</p>
+            <img id="img3" src="imagens/regressao-linear/distancia.png" class="project-img">
+        </div>
+
+        <div class="card">
+            <h2>Conclusão Técnica</h2>
+            <ul>
+                <li>Melhor divisão: <strong>70/15/15</strong></li>
+                <li>Modelo log melhora desempenho geral</li>
+                <li>Regressão linear tem limitação com dados complexos</li>
+                <li>Presença forte de ruído e variáveis não lineares</li>
+            </ul>
+
+            <p>
+                Modelos mais robustos como <strong>Random Forest</strong> e <strong>XGBoost</strong>
+                são mais adequados para capturar a complexidade da logística.
+            </p>
+        </div>
+
+    </main>
+
+</body>
+
+</html>
