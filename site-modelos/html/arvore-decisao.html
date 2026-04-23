@@ -37,7 +37,8 @@
                 </code>
             </div>
     
-            <h3>Principais Variáveis</h3>
+            <h3>Variáveis Independentes (Features)</h3>
+            <p>Variáveis selecionadas para evitar redundância e vazamento de dados:</p>
             <div class="variable-box">
                 handling_time_hours, month, approval_time_hours, distance_km,<br>
                 wind_gust, volume_cm3, freight_value, purchase_day_of_week,<br>
@@ -57,18 +58,14 @@
                 <tr><td>ROC-AUC</td><td>0.6618</td></tr>
                 <tr><td>PR-AUC</td><td style="color: var(--green);">0.9584</td></tr>
             </table>
-        </div>
-    
-        <div class="card">
+            
             <h2>Análise por Classe</h2>
             <table>
                 <tr><th>Classe</th><th>Precision</th><th>Recall</th><th>F1</th></tr>
                 <tr class="bad"><td>0 (Atraso)</td><td>0.32</td><td>0.38</td><td>0.34</td></tr>
                 <tr class="best"><td>1 (No prazo)</td><td>0.96</td><td>0.95</td><td>0.95</td></tr>
             </table>
-        </div>
-    
-        <div class="card">
+
             <h2>Overfitting</h2>
             <table>
                 <tr><th>Métrica</th><th>Treino</th><th>Teste</th><th>Gap</th></tr>
@@ -87,19 +84,14 @@
                 <tr><td>F1 Macro</td><td style="color: var(--blue);">0.6084</td></tr>
                 <tr><td>Recall Classe 0</td><td style="color: var(--yellow);">0.4020</td></tr>
             </table>
-        </div>
-    
-        <div class="card">
+
             <h2>Comparação</h2>
             <table>
                 <tr><th>Modelo</th><th>Accuracy</th><th>F1 Weighted</th><th>F1 Macro</th><th>Recall Classe 0</th></tr>
                 <tr class="bad"><td>Original</td><td>0.9140</td><td>0.9172</td><td>0.65</td><td>0.38</td></tr>
                 <tr class="best"><td>Ajustado</td><td>0.8776</td><td>0.8939</td><td>0.6084</td><td>0.4020</td></tr>
             </table>
-        </div>
-    
-        <!-- NOVA SEÇÃO INTEGRADA -->
-        <div class="card">
+
             <h2>Detalhamento das Métricas</h2>
     
             <h3>Tabela de Métricas</h3>
@@ -149,10 +141,52 @@
         <div class="card">
             <h2>Conclusão</h2>
             <ul>
-                <li>O modelo inicial apresenta overfitting significativo.</li>
-                <li>O dataset é desbalanceado (classe 1 domina).</li>
-                <li>O modelo ajustado melhora a generalização.</li>
-                <li>Detectar atrasos (classe 0) continua sendo o principal desafio.</li>
+                <h3>Dataset</h3>
+        
+                <li>
+                    O dataset é <strong>fortemente desbalanceado</strong>, com predominância da classe 1.
+                    Isso faz com que métricas como <strong>accuracy e F1 weighted sejam infladas</strong>,
+                    mascarando o baixo desempenho na classe 0.
+                </li>
+
+                <h3>Modelo</h3>
+                <li>
+                    A análise por classe evidencia o principal problema do modelo:
+                    <strong>baixa capacidade de identificar atrasos</strong>, com F1 da classe 0 de apenas
+                    <span style="color: var(--red);">0.28</span> e recall de ~0.40,
+                    enquanto a classe 1 atinge F1 superior a 0.93.
+                </li>
+        
+                <li>
+                    O fato de o <strong>ajuste de limiar (0.22)</strong> não alterar as métricas indica que
+                    o modelo possui <strong>baixa separação entre as probabilidades das classes</strong>,
+                    reforçando a limitação estrutural da árvore de decisão simples neste problema.
+                </li>
+
+                <h3>Insights</h3>
+                <li>
+                    O modelo inicial apresentou <strong>excelente desempenho global</strong> (F1 weighted = 0.9172),
+                    porém com <strong>overfitting significativo</strong> (gap de ~8%), indicando que ele decorou os dados de treino
+                    e possui menor capacidade de generalização.
+                </li>
+                <li>
+                    As features mais importantes mostram que fatores operacionais como
+                    <strong>tempo de manuseio, mês, tempo de aprovação e distância</strong>
+                    são mais relevantes que variáveis externas isoladas.<br>
+
+                    Top features:<br>
+                    handling_time_hours → 0.1899 (muito dominante)<br>
+                    month → 0.0858<br>
+                    approval_time_hours → 0.0770<br>
+                    distance_km → 0.0694
+                </li>
+                <br><br>
+                <li>
+                    Do ponto de vista de negócio, o modelo atual é mais eficiente para
+                    <strong>confirmar entregas no prazo</strong>, mas ainda é limitado para
+                    <strong>antecipar atrasos</strong>, que são os eventos mais críticos.
+                </li>
+    
             </ul>
         </div>
     
