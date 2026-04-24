@@ -45,9 +45,26 @@
                 geolocation_lat/lng, rainfall
             </div>
         </div>
-    
+
         <div class="card">
             <h2>Rodada 1 - Modelo não Ajustado</h2>
+            <h3>Desempenho</h3>
+            <table>
+                <tr><th>Métrica</th><th>Valor</th></tr>
+                <tr><td>Accuracy</td><td>0.9111</td></tr>
+                <tr><td>Precision (weighted)</td><td>0.9580</td></tr>
+                <tr><td>Recall (weighted)</td><td>0.9471</td></tr>
+            </table>
+
+            <h2>Matriz de confusão gerada</h2>
+            <img src="../imagens/arvore-decisao/matriz-confusao-rodada1.png" alt="Matriz de Confusão" style="width:100%; max-width:600px; margin-top: 1rem;">
+
+            <h2>Arvore de Decisão gerada</h2>
+            <img src="../imagens/arvore-decisao/arvore-decisao-rodada1.png" alt="Árvore de Decisão" style="width:100%; max-width:600px; margin-top: 1rem;">
+        </div>
+    
+        <div class="card">
+            <h2>Rodada 2 - Modelo melhorado</h2>
             <h3>Desempenho</h3>
             <table>
                 <tr><th>Métrica</th><th>Valor</th></tr>
@@ -72,10 +89,15 @@
                 <tr><td>Accuracy</td><td>1.0000</td><td>0.9140</td><td class="bad">0.0860</td></tr>
                 <tr><td>F1</td><td>1.0000</td><td>0.9172</td><td class="bad">0.0828</td></tr>
             </table>
+
+            <h2>Matriz de confusão gerada</h2>
+            <img src="../imagens/arvore-decisao/matriz-confusao-rodada2.png" alt="Matriz de Confusão" style="width:100%; max-width:600px; margin-top: 1rem;">
+            <h2>Árvore gerada</h2>
+            <img src="../imagens/arvore-decisao/arvore-decisao-rodada2.png" alt="Árvore de Decisão" style="width:100%; max-width:600px; margin-top: 1rem;">
         </div>
     
         <div class="card">
-            <h2>Rodada 2 - Modelo Ajustado</h2>
+            <h2>Rodada 3 - Modelo Ajustado</h2>
             <p><strong>Profundidade:</strong> 3 | <strong>Critério:</strong> Gini</p>
     
             <table>
@@ -110,6 +132,12 @@
                     </td>
                 </tr>
             </table>
+
+            <h3>Matriz de Confusão</h3>
+            <img src="../imagens/arvore-decisao/matriz-confusao-rodada3.png" alt="Matriz de Confusão" style="width:100%; max-width:600px; margin-top: 1rem;">
+    
+            <h3>Árvore de Decisão</h3>
+            <img src="../imagens/arvore-decisao/arvore-decisao-rodada3.png" alt="Árvore de Decisão" style="width:100%; max-width:600px; margin-top: 1rem;">
     
             <h3>Explicação</h3>
             <div class="variable-box">
