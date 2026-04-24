@@ -6,6 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XGBoost - Dashboard</title>
     <link rel="stylesheet" href="../css/style.css">
+    <style>
+        /* CSS ajustado para funcionar bem em temas escuros, mantendo o contraste do texto */
+        .metric-box {
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left: 4px solid var(--blue, #007bff);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 
 <body>
@@ -23,8 +33,174 @@
 
     <main class="container">
         <div class="card">
-            <h2>XGBoost</h2>
-            <p>Conteúdo sobre o XGBoost virá aqui...</p>
+            <h2>Objetivo e Abordagem do Modelo</h2>
+            <p>
+                O objetivo do modelo <strong>XGBoost (Classificador)</strong> é prever a ocorrência de um evento
+                específico na cadeia de distribuição:
+                <strong style="color: var(--green); border-bottom: 2px solid var(--green);">o pedido vai atrasar ou
+                    não?</strong>
+                (Variável alvo: delivered_on_time, onde 0 = atraso e 1 = no prazo).
+            </p>
+
+            <div class="formula-box">
+                <h3 style="font-size: 0.9rem; color: var(--blue); text-transform: uppercase;">O Desafio do
+                    Desbalanceamento</h3>
+                <p style="font-size: 1rem; color: var(--text); margin-top: 10px;">
+                    A classe de atrasos é extremamente minoritária (apenas <strong>~6%</strong> dos dados). Se o modelo
+                    prever que "nenhum pedido vai atrasar", ele terá 94% de acurácia, mas será inútil para o negócio.
+                    Para corrigir isso, aplicamos <strong>ponderação de classes</strong> durante o treinamento, calculada
+                    automaticamente como a razão entre a classe majoritária (no prazo) e a minoritária (atraso).
+                    Nos dados de treino, isso resultou em um peso aproximado de <strong>15.60x</strong> para a classe de
+                    atrasos, forçando o algoritmo a prestar atenção às falhas logísticas.
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Otimização de Hiperparâmetros (Tuning)</h2>
+            <p>
+                Foi realizada uma <strong>busca aleatória (Random Search)</strong> com <strong>Validação Cruzada Estratificada
+                (StratifiedKFold com 3 folds)</strong> para encontrar a melhor combinação de hiperparâmetros.
+                Foram avaliados <strong>16 candidatos diferentes</strong>, combinando variações em profundidade, taxa de
+                aprendizado, subsample, regularização e outros parâmetros do XGBoost.
+            </p>
+            <p style="margin-top: 15px;">
+                <strong>Método de Validação (Out-of-Fold):</strong> Para reduzir otimismo excessivo, cada linha do conjunto de
+                treino recebeu uma previsão de um fold onde não participou do treinamento. Isso garante que a seleção dos
+                melhores parâmetros seja baseada em previsões verdadeiramente não-vistas.
+            </p>
+            <p style="margin-top: 15px;">
+                A métrica guia para a escolha não foi a Acurácia, mas sim o <strong>F2-Score da classe de atraso
+                </strong> (beta=2), que penaliza muito mais o modelo por "deixar passar" um atraso do que por dar um
+                "alerta falso". Em caso de empate no F2, o Recall foi usado como critério de desempate.
+            </p>
+
+            <h3>Melhores Parâmetros Encontrados (Modelo V2)</h3>
+            <div class="variable-box" style="font-size: 0.9rem;">
+                <strong>Árvores e Aprendizado:</strong><br>
+                'n_estimators': 250 (número de árvores)<br>
+                'max_depth': 5 (profundidade máxima de cada árvore)<br>
+                'learning_rate': 0.07 (taxa de aprendizado, menor = mais conservador)<br><br>
+                <strong>Subsampling (Redução de Variância):</strong><br>
+                'subsample': 0.85 (85% das amostras por árvore)<br>
+                'colsample_bytree': 0.95 (95% das features por árvore)<br>
+                'min_child_weight': 7 (mínimo de peso por nó folha)<br><br>
+                <strong>Regularização (Prevenção de Overfitting):</strong><br>
+                'gamma': 0.1 (penalidade para complexidade)<br>
+                'reg_alpha': 0.5 (regularização L1)<br>
+                'reg_lambda': 1.0 (regularização L2)<br><br>
+                <strong>Melhor Limiar de Decisão (Threshold):</strong> 0.52<br>
+                <em>(Probabilidade acima de 0.52 é classificada como "Atraso")</em>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Comparativo de Performance: Baseline vs Otimizado</h2>
+            <p>Abaixo, comparamos o modelo inicial (V1 - Baseline, Threshold 0.50) com o modelo tunado (V2 - Otimizado,
+                Threshold 0.52) com foco estrito na detecção da classe 0 (Atrasos) nos dados de <strong>Teste</strong>.
+            </p>
+
+            <table>
+                <tr>
+                    <th>Modelo</th>
+                    <th>Acurácia Geral</th>
+                    <th>ROC-AUC</th>
+                    <th>Precision (Atraso)</th>
+                    <th>Recall (Atraso)</th>
+                    <th>F2-Score (Atraso)</th>
+                </tr>
+                <tr>
+                    <td>V1 (Baseline)</td>
+                    <td>92.76%</td>
+                    <td>0.8397</td>
+                    <td>41.67%</td>
+                    <td>50.25%</td>
+                    <td>0.4826</td>
+                </tr>
+                <tr class="best">
+                    <td>V2 (Otimizado)</td>
+                    <td>88.90%</td>
+                    <td>0.8480</td>
+                    <td>29.85%</td>
+                    <td>62.25%</td>
+                    <td>0.5115</td>
+                </tr>
+            </table>
+
+            <h3>Evolução das Métricas (V2 vs V1)</h3>
+            <ul>
+                <li><strong style="color: var(--red);">Acurácia: -4.16%</strong> (88.90% vs 92.76%)
+                    <br><em>Diminuiu propositalmente para capturar mais atrasos. Uma acurácia alta com baixo recall é inútil.</em></li>
+                <li><strong style="color: var(--red);">Precision: -28.37%</strong> (29.85% vs 41.67%)
+                    <br><em>Mais falsos positivos de atraso, mas esse é o trade-off necessário.</em></li>
+                <li><strong style="color: var(--green);">Recall: +23.90%</strong> (62.25% vs 50.25%)
+                    <br><em>Ganho massivo: agora detecta 62% dos atrasos reais versus 50% antes.</em></li>
+                <li><strong style="color: var(--green);">ROC-AUC: +0.99%</strong> (0.8480 vs 0.8397)
+                    <br><em>Melhoria na capacidade discriminativa geral do modelo.</em></li>
+                <li><strong style="color: var(--green);">F2-Score: +5.99%</strong> (0.5115 vs 0.4826)
+                    <br><em>Melhor equilíbrio focado na prevenção de atrasos.</em></li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Análise de Negócio e Insights Logísticos</h2>
+
+            <h3>A Ilusão da Acurácia</h3>
+            <p>O modelo V1 tinha quase 93% de acurácia, mas só detectava metade (50.2%) dos problemas reais. No contexto
+                do <em>Last Mile</em>, uma acurácia alta não serve de nada se os clientes continuam recebendo entregas
+                fora do prazo sem nenhum aviso prévio. O modelo V2 reduziu a acurácia para ~89%, mas se tornou um
+                mecanismo de alerta preventivo significativamente mais eficaz.</p>
+
+            <h3>O Trade-off: Precision vs Recall</h3>
+            <div class="metric-box">
+                <strong>O que significa na operação?</strong><br><br>
+                Com o modelo V2 otimizado, o <strong>Recall subiu para 62.25%</strong>. Isso significa que, de todos os
+                pacotes que vão de fato atrasar, a logística conseguirá prever e atuar preventivamente em <strong>62 de cada 100</strong>.
+                <br><br>
+                O preço pago por isso foi a queda da <strong>Precision para 29.85%</strong>. Na prática: a cada 10
+                pacotes que o modelo sinaliza como "Risco de Atraso", apenas 3 realmente atrasariam. Os outros 7
+                chegariam no prazo, mas geraram um falso alerta.
+                <br><br>
+                <strong>Análise de Custo-Benefício:</strong><br>
+                ✅ <strong>Custo de um falso alerta:</strong> reaalocar recursos de logística ou contatar cliente para ajustar expectativas (baixo custo)<br>
+                ❌ <strong>Custo de um atraso não previsto:</strong> cliente decepcionado, possível reembolso, reputação abalada (alto custo)<br><br>
+                <strong>Conclusão:</strong> Sob a ótica operacional, é preferível lidar com sete alertas preventivos incorretos do que deixar um cliente sem aviso prévio sobre um atraso real.
+            </div>
+
+            <h3>Visão da Matriz de Confusão</h3>
+            <p>Para visualizar exatamente onde o modelo está errando e acertando com o limiar de 0.52, analise a
+                distribuição dos erros:</p>
+            <div style="text-align: center; margin: 20px 0;">
+                <img id="img-matriz-xgb" src="../imagens/XGBoost/MatrizDeConfusao.png" class="project-img"
+                    alt="Matriz de Confusão do XGBoost V2"
+                    style="max-width: 400px; border: 1px solid #ddd; border-radius: 8px;">
+                <p style="font-size: 0.8rem; color: #888;">Matriz de Confusão - V2 (Limiar 0.52)</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Limitações e Considerações Práticas</h2>
+            <ul>
+                <li><strong>Taxa de Falsos Positivos:</strong> Com 29.85% de precisão, ~70% dos alertas são falsos. 
+                    Sistema de alerta deve ser robusto para não saturar a operação.</li><br>
+                <li><strong>Cobertura Parcial:</strong> Mesmo com 62.25% de recall, 38% dos atrasos ainda não serão detectados.
+                    Não é um sistema à prova de falhas, é um sistema de mitigação de riscos.</li><br>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Conclusão Técnica</h2>
+            <ul>
+                <li>O algoritmo <strong>XGBoost lidou excelentemente bem com a complexidade e as não-linearidades</strong> dos dados
+                    climáticos e operacionais, conseguindo extrair padrões mesmo em uma base desbalanceada.</li><br>
+                <li>A escolha da <strong>métrica alvo (F2-Score com beta=2)</strong> provou ser vital. Otimizar para acurácia
+                    ou até para F1-Score resultaria em um modelo inútil. F2 força o foco em não deixar atrasos passarem desapercebidos.</li><br>
+                <li>A <strong>validação cruzada estratificada</strong> com método Out-of-Fold garante que os parâmetros e limiares
+                    selecionados não sofram com overfitting.</li><br>
+                <li><strong>Diretriz Estratégica:</strong> Implementar o modelo V2 como sistema de alerta preventivo.
+                    O custo de um "falso alerta" sistêmico é consideravelmente menor do que o impacto negativo de uma
+                    entrega atrasada que pegue o cliente de surpresa.</li>
+            </ul>
         </div>
     </main>
 
