@@ -49,6 +49,14 @@
         </div>
 
         <div class="card">
+            <h2>Distribuição da Variável Dependente</h2>
+            <h3>Original</h3>
+            <img src="../imagens/regressao-linear/distribuicao-frequencia.png" alt="Distribuição do Tempo de Entrega" class="img-width-90">
+            <h3>Aplicando Log</h3>
+            <img src="../imagens/regressao-linear/distribuicao-frequencia-log.png" alt="Distribuição do Tempo de Entrega Logaritmizada" class="img-width-50">
+        </div>
+
+        <div class="card">
             <h2>Comparativo de Performance por Split</h2>
 
             <h3>75% Treino / 25% Teste</h3>
@@ -170,28 +178,28 @@
             
             <h3>Distância vs Tempo (Fator Crítico)</h3>
             <p>É a variável com correlação mais clara e consistente: distâncias maiores exigem invariavelmente mais dias de trânsito.</p>
-            <img id="img3" src="imagens/regressao-linear/distancia.png" class="project-img" alt="Gráfico de Distância">
+            <img id="img3" src="../imagens/regressao-linear/distancia.png" class="project-img" alt="Gráfico de Distância">
 
             <h3>Chuva vs Tempo</h3>
             <p>Apresenta correlação positiva, porém leve. Curiosamente, os atrasos extremos (outliers) ocorreram em dias de pouca chuva, indicando que o clima não é o único causador de crises logísticas.</p>
-            <img id="img1" src="imagens/regressao-linear/chuva.png" class="project-img" alt="Gráfico de Chuva">
+            <img id="img1" src="../imagens/regressao-linear/chuva.png" class="project-img" alt="Gráfico de Chuva">
 
             <h3>Peso do Produto vs Tempo</h3>
             <p>Existe uma tendência de que pacotes mais pesados levem mais tempo, mas o efeito não é linear: produtos de peso médio apresentaram variações de tempo maiores que os muito pesados.</p>
-            <img id="img2" src="imagens/regressao-linear/peso.png" class="project-img" alt="Gráfico de Peso">
+            <img id="img2" src="../imagens/regressao-linear/peso.png" class="project-img" alt="Gráfico de Peso">
         </div>
 
         <div class="card">
             <h2>Avaliação e Limitações</h2>
             <p>O modelo apresenta dificuldade em lidar com <strong>atrasos extremos</strong>. Quando uma entrega real demora 40-60 dias, o modelo tende a prever valores próximos a 10 dias, subestimando o prazo.</p>
             <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
-                <img id="img-grafico-1" src="imagens/regressao-linear/valores-reais-vs-valores-previstos.png" alt="Valores Reais vs Previstos" style="width: 45%;">
-                <img id="img-grafico-2" src="imagens/regressao-linear/residuos.png" alt="Gráfico de Resíduos" style="width: 45%;">
+                <img id="img-grafico-1" src="../imagens/regressao-linear/valores-reais-vs-valores-previstos.png" alt="Valores Reais vs Previstos" style="width: 45%;">
+                <img id="img-grafico-2" src="../imagens/regressao-linear/residuos.png" alt="Gráfico de Resíduos" style="width: 45%;">
             </div>
         </div>
 
         <div class="card">
-            <h2>Conclusão Técnica</h2>
+            <h2>Conclusão</h2>
             <ul>
                 <li>A relação dos dados não é estritamente linear, apresentando muito ruído e variações complexas.</li>
                 <li>O modelo <strong>Log-Log</strong> na divisão <strong>70/15/15</strong> é o mais equilibrado para esta base.</li>

@@ -1,11 +1,58 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PCA - Dashboard</title>
     <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .metric-box {
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left: 4px solid var(--blue, #007bff);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .code-box {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            margin: 10px 0;
+        }
+
+        /* Classe auxiliar para melhorar a disposição das imagens */
+        .img-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+        }
+
+        .img-container img {
+            width: 100%;
+            max-width: 750px;
+            /* Evita que a imagem fique gigante em telas grandes */
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .img-caption {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 15px;
+        }
+    </style>
 </head>
+
 <body>
 
     <nav class="navbar">
@@ -22,9 +69,104 @@
     <main class="container">
         <div class="card">
             <h2>Análise de Componentes Principais (PCA)</h2>
-            <p>Conteúdo sobre o PCA virá aqui...</p>
+            <p>
+                O PCA foi aplicado para condensar a informação da base logística em componentes ortogonais,
+                reduzindo redundância entre variáveis e mantendo a estrutura estatística necessária para modelagem.
+                Em vez de trabalhar com dezenas de atributos correlacionados, a análise passa a operar em um espaço
+                mais compacto, estável e interpretável, com foco em desempenho preditivo e robustez analítica.
+            </p>
+
+            <div class="formula-box">
+                <h3 style="font-size: 0.9rem; color: var(--blue); text-transform: uppercase;">Método de Aplicação</h3>
+                <p style="font-size: 1rem; color: var(--text); margin-top: 10px;">
+                    A abordagem combina padronização dos dados, decomposição em componentes principais e definição de
+                    corte por variância acumulada para equilibrar simplificação da base e preservação de informação.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Variância Explicada e Scree Plot</h2>
+            <p>
+                O Scree Plot mostra quanto cada componente principal contribui para explicar a variância total da
+                base. A leitura prática é observar a inclinação da curva: no início, cada componente adiciona ganho
+                relevante; depois do ponto de cotovelo, a curva tende a achatar, sinalizando que novos componentes
+                agregam informação incremental cada vez menor.
+            </p>
+
+            <div class="metric-box">
+                <strong>Leitura técnica:</strong><br><br>
+                O Scree Plot não define sozinho o número final de componentes, mas orienta essa decisão ao evidenciar
+                onde o ganho marginal começa a cair. Em conjunto com a meta de variância acumulada de
+                <strong>80%</strong>, ele sustenta um corte tecnicamente equilibrado entre retenção de informação e
+                simplificação do espaço de atributos.
+            </div>
+
+            <div class="img-container">
+                <img id="img-pca-scree" src="../imagens/pca/ScreePlot.png" alt="Scree Plot PCA">
+                <p class="img-caption">Scree Plot: queda de contribuição por componente e identificação visual da região
+                    de cotovelo, onde os ganhos passam a ser marginais.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Seleção Automática para 80% de Variância</h2>
+            <p>
+                Após o diagnóstico inicial, o PCA completo é ajustado e a variância acumulada é usada para
+                selecionar automaticamente o menor número de componentes que atinge o limiar de <strong>80%</strong>.
+            </p>
+
+            <ul>
+                <li><strong>Limiar configurado:</strong> <em>target_cumulative_variance = 0.80</em>.</li>
+                <li><strong>Regra de escolha:</strong> seleciona o primeiro ponto em que a variância acumulada alcança
+                    ou supera 80%.</li>
+                <li><strong>Saída esperada:</strong> quantidade de componentes selecionados e variância acumulada
+                    atingida.</li>
+            </ul>
+
+            <div class="metric-box">
+                <strong>Resultado obtido:</strong> Componentes selecionados: <strong>35</strong>.<br><br>
+                <strong>Conclusão:</strong> para preservar 80% da informação, foi necessário manter um número elevado
+                de componentes, indicando que a variância está distribuída entre vários fatores e que o fenômeno
+                logístico analisado é multivariável, sem dependência de poucos atributos dominantes.
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Visualização de Scores (PC1 x PC2)</h2>
+            <p>
+                O gráfico final é um <strong>gráfico de scores</strong>, com as observações
+                projetadas em PC1 e PC2. Essa visualização ajuda a inspecionar dispersão e possíveis agrupamentos
+                no espaço reduzido.
+            </p>
+
+            <div class="img-container">
+                <img id="img-pca-biplot" src="../imagens/pca/biplot.png" alt="Gráfico de scores PCA">
+                <p class="img-caption">Projeção das observações no plano PC1 x PC2 (scores do PCA).</p>
+            </div>
+
+            <div class="metric-box">
+                <strong>Insight Técnico:</strong><br>
+                Como os componentes são ortogonais, o PCA reduz redundância entre variáveis e gera uma representação
+                mais compacta para etapas posteriores de modelagem.
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Escopo Atual e Extensões Futuras</h2>
+            <p>
+                O PCA entrega uma base transformada mais enxuta e tecnicamente consistente para as próximas etapas do
+                projeto. Com menor colinearidade e menor ruído estrutural, a modelagem tende a ganhar em estabilidade,
+                tempo de treino e capacidade de generalização.
+            </p>
+            <ul>
+                <li><strong>Aplicação em modelos supervisionados:</strong> utilizar os componentes como entrada para
+                    regressão, árvores e modelos de ensemble.</li><br>
+                <li><strong>Segmentação operacional:</strong> explorar clusterização no espaço PCA para identificar
+                    perfis de rota e padrões logísticos.</li>
+            </ul>
         </div>
     </main>
 
 </body>
+
 </html>

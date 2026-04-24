@@ -23,8 +23,153 @@
 
     <main class="container">
         <div class="card">
-            <h2>Random Forest</h2>
-            <p>Conteúdo sobre o Random Forest virá aqui...</p>
+            <h2>Objetivo do Modelo</h2>
+            <p>
+                O Random Forest foi implementado para classificar entregas em <strong>Atraso (0)</strong> ou <strong>No
+                    Prazo (1)</strong>. Por ser um modelo de <i>Ensemble</i>, ele combina múltiplas árvores para reduzir
+                a variância e melhorar a robustez da predição em dados logísticos complexos.
+            </p>
+        </div>
+
+        <div class="card">
+            <h2>Melhores Hiperparâmetros (Ajustados via Grid Search)</h2>
+            <ul>
+                <li><strong>n_estimators:</strong> 207</li>
+                <li><strong>max_depth:</strong> 12</li>
+                <li><strong>min_samples_leaf:</strong> 8</li>
+                <li><strong>min_samples_split:</strong> 11</li>
+                <li><strong>max_features:</strong> 'sqrt'</li>
+                <li><strong>max_samples:</strong> 0.7</li>
+            </ul>
+            <p><strong>Threshold de decisão ótimo (F2 Max):</strong> <span class="highlight-val">0.3407</span></p>
+        </div>
+
+        <div class="card">
+            <h2>Otimização do Threshold (Ponto de Corte)</h2>
+            <p>
+                Diferente de modelos padrão que usam 0.5 como corte, ajustamos o threshold para maximizar o <strong>F2
+                    Score</strong>, garantindo que o modelo seja sensível o suficiente para detectar atrasos sem perder
+                totalmente a precisão.
+            </p>
+            <div class="visualization-item">
+                <h3>F2-Score vs Threshold</h3>
+                <img src="../imagens/random-forest/f2-vs-threshold.png" alt="F2 Score vs Threshold"
+                    class="img-width-50">
+                <p>
+                    O ponto mais alto desta curva representa o nosso threshold ótimo de <span
+                        class="highlight-val">0.34</span>.
+                    <br>É neste valor que conseguimos o melhor equilíbrio para a detecção de atrasos no <i>last
+                        mile</i>.
+                </p>
+            </div>
+        </div>
+
+
+        <div class="card">
+            <h2>Estratégia de Undersampling</h2>
+            <p>
+                Para lidar com o desbalanceamento (muito mais entregas no prazo do que atrasadas), testamos três níveis
+                de <strong>Random Undersampling</strong> no treino. O objetivo é evitar que o modelo ignore a classe
+                minoritária.
+            </p>
+            <br>
+            <div class="comparison-card">
+                <h3>Comparativo de Performance por Balanceamento</h3>
+                <p>O impacto da proporção de <strong>Undersampling</strong> no conjunto de teste para a detecção de
+                    atrasos:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Proporção (Atraso:No Prazo)</th>
+                            <th>Recall (Atrasos)</th>
+                            <th>F2-Score</th>
+                            <th>Status Operacional</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="best">
+                            <td><strong>1:1</strong></td>
+                            <td>0.2549</td>
+                            <td>0.2244</td>
+                            <td><strong>Melhor para Operação</strong></td>
+                        </tr>
+                        <tr>
+                            <td>1:2</td>
+                            <td>0.0441</td>
+                            <td>0.0541</td>
+                            <td>Sensibilidade Reduzida</td>
+                        </tr>
+                        <tr class="bad">
+                            <td>1:3</td>
+                            <td>0.0319</td>
+                            <td>0.0395</td>
+                            <td>Inviável (Ignora atrasos)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="observation">
+                    <p><strong>Observação:</strong> A proporção <strong>1:1</strong> apresenta um Recall
+                        significativamente superior. Embora sacrifique a acurácia global, é a única configuração que
+                        permite identificar um volume útil de atrasos reais para a tomada de decisão logística.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Visualizações e Matrizes de Confusão</h2>
+            <div class="visualization-grid">
+                <div class="visualization-item">
+                    <h3>Matriz Original</h3>
+                    <img src="../imagens/random-forest/matriz-confusao-original.png" alt="Matriz de Confusão 1:1">
+                    <p>O modelo aprendeu que a grande maioria das entregas chega No Prazo (Classe 1). Por conta disso,
+                        ele tende a chutar que quase tudo vai dar certo para manter uma acurácia alta.</p>
+                </div>
+                <div class="visualization-item">
+                    <h3>Matriz 1:1 (Recomendada)</h3>
+                    <img src="../imagens/random-forest/matriz-confusao-1-1.png" alt="Matriz de Confusão 1:1">
+                    <p>Detecta o maior volume de atrasos reais, essencial para a gestão de riscos.</p>
+                </div>
+            </div>
+
+            <div class="visualization-grid">
+                <div class="visualization-item">
+                    <h3>Matriz 1:2</h3>
+                    <img src="../imagens/random-forest/matriz-confusao-1-2.png" alt="Matriz de Confusão 1:2">
+                    <p>O modelo torna-se muito conservador e falha em identificar riscos.</p>
+                </div>
+                <div class="visualization-item">
+                    <h3>Matriz 1:3</h3>
+                    <img src="../imagens/random-forest/matriz-confusao-1-3.png" alt="Matriz de Confusão 1:3">
+                    <p>Comportamento similar ao dado original desbalanceado: baixa utilidade prática.</p>
+                </div>
+            </div>
+            <div class="visualization-grid">
+                <div class="visualization-item">
+                    <h3>Importância das Features</h3>
+                    <img src="../imagens/random-forest/variaveis-importantes.png" alt="Importância das Variáveis">
+                    <p>As variáveis <strong>month</strong> e <strong>distance_km</strong> dominam a tomada de decisão do
+                        modelo.</p>
+                </div>
+                <div class="visualization-item">
+                    <h3>Curva ROC (Modelo 1:1)</h3>
+                    <img class="full-width-img" src="../imagens/random-forest/curva-roc-1-1.png" alt="Curva ROC">
+                    <p>AUC de 0.66: Indica uma capacidade de separação moderada entre as classes.</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card">
+            <h2>Conclusão</h2>
+            <ul>
+                <li><strong>Escolha do Modelo:</strong> A configuração <strong>1:1</strong> é a única viável para o
+                    negócio, pois as outras (1:2 e 1:3) apresentam um Recall extremamente baixo, sendo incapazes de
+                    alertar a operação sobre possíveis problemas.</li>
+                <li><strong>Ponto de Corte:</strong> Utilizar o threshold de <strong>0.34</strong> em vez do padrão 0.5
+                    aumenta a sensibilidade do sistema para capturar anomalias.</li>
+            </ul>
         </div>
     </main>
 
