@@ -19,10 +19,204 @@
     </nav>
 
     <main class="container">
+
         <div class="card">
-            <h2>Árvore de Decisão</h2>
-            <p>Conteúdo sobre a Árvore de Decisão virá aqui...</p>
+            <h2>Objetivo</h2>
+            <p>
+                O modelo de <strong>Árvore de Decisão</strong> tem como objetivo prever se uma entrega será realizada dentro do prazo,
+                representado pela variável 
+                <strong style="color: var(--green); border-bottom: 2px solid var(--green);">delivered_on_time</strong>.
+            </p>
+    
+            <div class="formula-box">
+                <h3 style="font-size: 0.9rem; color: var(--blue); text-transform: uppercase;">
+                    Lógica da Árvore de Decisão
+                </h3>
+                <code style="font-size: 1.2rem; color: var(--bright);">
+                    condição → divisão → decisão final
+                </code>
+            </div>
+    
+            <h3>Variáveis Independentes (Features)</h3>
+            <p>Variáveis selecionadas para evitar redundância e vazamento de dados:</p>
+            <div class="variable-box">
+                handling_time_hours, month, approval_time_hours, distance_km,<br>
+                wind_gust, volume_cm3, freight_value, purchase_day_of_week,<br>
+                geolocation_lat/lng, rainfall
+            </div>
         </div>
+
+        <div class="card">
+            <h2>Rodada 1 - Modelo não Ajustado</h2>
+            <h3>Desempenho</h3>
+            <table>
+                <tr><th>Métrica</th><th>Valor</th></tr>
+                <tr><td>Accuracy</td><td>0.9111</td></tr>
+                <tr><td>Precision (weighted)</td><td>0.9580</td></tr>
+                <tr><td>Recall (weighted)</td><td>0.9471</td></tr>
+            </table>
+
+            <h2>Matriz de confusão gerada</h2>
+            <img src="../imagens/arvore-decisao/matriz-confusao-rodada1.png" alt="Matriz de Confusão" style="width:100%; max-width:600px; margin-top: 1rem;">
+
+            <h2>Arvore de Decisão gerada</h2>
+            <img src="../imagens/arvore-decisao/arvore-decisao-rodada1.png" alt="Árvore de Decisão" style="width:100%; max-width:600px; margin-top: 1rem;">
+        </div>
+    
+        <div class="card">
+            <h2>Rodada 2 - Modelo melhorado</h2>
+            <h3>Desempenho</h3>
+            <table>
+                <tr><th>Métrica</th><th>Valor</th></tr>
+                <tr><td>Accuracy</td><td>0.9140</td></tr>
+                <tr><td>Precision (weighted)</td><td>0.9208</td></tr>
+                <tr><td>Recall (weighted)</td><td>0.9140</td></tr>
+                <tr><td>F1</td><td>0.9172</td></tr>
+                <tr><td>ROC-AUC</td><td>0.6618</td></tr>
+                <tr><td>PR-AUC</td><td style="color: var(--green);">0.9584</td></tr>
+            </table>
+            
+            <h2>Análise por Classe</h2>
+            <table>
+                <tr><th>Classe</th><th>Precision</th><th>Recall</th><th>F1</th></tr>
+                <tr class="bad"><td>0 (Atraso)</td><td>0.32</td><td>0.38</td><td>0.34</td></tr>
+                <tr class="best"><td>1 (No prazo)</td><td>0.96</td><td>0.95</td><td>0.95</td></tr>
+            </table>
+
+            <h2>Overfitting</h2>
+            <table>
+                <tr><th>Métrica</th><th>Treino</th><th>Teste</th><th>Gap</th></tr>
+                <tr><td>Accuracy</td><td>1.0000</td><td>0.9140</td><td class="bad">0.0860</td></tr>
+                <tr><td>F1</td><td>1.0000</td><td>0.9172</td><td class="bad">0.0828</td></tr>
+            </table>
+
+            <h2>Matriz de confusão gerada</h2>
+            <img src="../imagens/arvore-decisao/matriz-confusao-rodada2.png" alt="Matriz de Confusão" style="width:100%; max-width:600px; margin-top: 1rem;">
+            <h2>Árvore gerada</h2>
+            <img src="../imagens/arvore-decisao/arvore-decisao-rodada2.png" alt="Árvore de Decisão" style="width:100%; max-width:600px; margin-top: 1rem;">
+        </div>
+    
+        <div class="card">
+            <h2>Rodada 3 - Modelo Ajustado</h2>
+            <p><strong>Profundidade:</strong> 3 | <strong>Critério:</strong> Gini</p>
+    
+            <table>
+                <tr><th>Métrica</th><th>Valor</th></tr>
+                <tr><td>Accuracy</td><td>0.8776</td></tr>
+                <tr><td>F1 Macro</td><td style="color: var(--blue);">0.6084</td></tr>
+                <tr><td>Recall Classe 0</td><td style="color: var(--yellow);">0.4020</td></tr>
+            </table>
+
+            <h2>Comparação</h2>
+            <table>
+                <tr><th>Modelo</th><th>Accuracy</th><th>F1 Weighted</th><th>F1 Macro</th><th>Recall Classe 0</th></tr>
+                <tr class="bad"><td>Original</td><td>0.9140</td><td>0.9172</td><td>0.65</td><td>0.38</td></tr>
+                <tr class="best"><td>Ajustado</td><td>0.8776</td><td>0.8939</td><td>0.6084</td><td>0.4020</td></tr>
+            </table>
+
+            <h2>Detalhamento das Métricas</h2>
+    
+            <h3>Tabela de Métricas</h3>
+            <table>
+                <tr><th>Cenário</th><th>Métrica</th><th>Valor</th></tr>
+    
+                <tr><td>Limiar 0.5</td><td>Accuracy</td><td>0.8776</td></tr>
+                <tr><td>Limiar 0.5</td><td>F1 macro</td><td>0.6084</td></tr>
+                <tr><td>Limiar 0.5</td><td>F1 weighted</td><td>0.8939</td></tr>
+                <tr class="bad"><td>Limiar 0.5</td><td>F1 classe 0</td><td>0.2837</td></tr>
+                <tr class="best"><td>Limiar 0.5</td><td>F1 classe 1</td><td>0.9331</td></tr>
+    
+                <tr>
+                    <td colspan="3" style="text-align:center; color: var(--yellow);">
+                        Limiar ajustado (0.22) manteve os mesmos resultados
+                    </td>
+                </tr>
+            </table>
+
+            <h3>Matriz de Confusão</h3>
+            <img src="../imagens/arvore-decisao/matriz-confusao-rodada3.png" alt="Matriz de Confusão" style="width:100%; max-width:600px; margin-top: 1rem;">
+    
+            <h3>Árvore de Decisão</h3>
+            <img src="../imagens/arvore-decisao/arvore-decisao-rodada3.png" alt="Árvore de Decisão" style="width:100%; max-width:600px; margin-top: 1rem;">
+    
+            <h3>Explicação</h3>
+            <div class="variable-box">
+                Macro → peso igual para todas as classes<br>
+                Weighted → peso maior para a classe dominante (classe 1)
+            </div>
+    
+            <p>
+                O modelo apresenta métricas altas em <strong>weighted</strong>, mas isso ocorre porque a classe 1 domina o dataset.
+                Já a <strong>classe 0 (atrasos)</strong> continua sendo difícil de prever.
+            </p>
+    
+            <h3>Interpretação das Classes</h3>
+            <table>
+                <tr><th>Classe</th><th>Significado</th><th>Insight</th></tr>
+                <tr class="bad">
+                    <td>0</td>
+                    <td>Entrega atrasada</td>
+                    <td>Baixa precisão → modelo erra bastante</td>
+                </tr>
+                <tr class="best">
+                    <td>1</td>
+                    <td>Entrega no prazo</td>
+                    <td>Alta precisão → modelo favorece essa classe</td>
+                </tr>
+            </table>
+        </div>
+    
+        <div class="card">
+            <h2>Conclusão</h2>
+            <ul>
+                <h3>Dataset</h3>
+        
+                <li>
+                    O dataset é <strong>fortemente desbalanceado</strong>, com predominância da classe 1.
+                    Isso faz com que métricas como <strong>accuracy e F1 weighted sejam infladas</strong>,
+                    mascarando o baixo desempenho na classe 0.
+                </li>
+
+                <h3>Modelo</h3>
+                <li>
+                    A análise por classe evidencia o principal problema do modelo:
+                    <strong>baixa capacidade de identificar atrasos</strong>, com F1 da classe 0 de apenas
+                    <span style="color: var(--red);">0.28</span> e recall de ~0.40,
+                    enquanto a classe 1 atinge F1 superior a 0.93.
+                </li>
+        
+                <li>
+                    O fato de o <strong>ajuste de limiar (0.22)</strong> não alterar as métricas indica que
+                    o modelo possui <strong>baixa separação entre as probabilidades das classes</strong>,
+                    reforçando a limitação estrutural da árvore de decisão simples neste problema.
+                </li>
+
+                <h3>Insights</h3>
+                <li>
+                    O modelo inicial apresentou <strong>excelente desempenho global</strong> (F1 weighted = 0.9172),
+                    porém com <strong>overfitting significativo</strong> (gap de ~8%), indicando que ele decorou os dados de treino
+                    e possui menor capacidade de generalização.
+                </li>
+                <li>
+                    As features mais importantes mostram que fatores operacionais como
+                    <strong>tempo de manuseio, mês, tempo de aprovação e distância</strong>
+                    são mais relevantes que variáveis externas isoladas.<br><br>
+                </li>
+                <ul><li>Top features:<br>
+                    handling_time_hours → 0.1899 (muito dominante)<br>
+                    month → 0.0858<br>
+                    approval_time_hours → 0.0770<br>
+                    distance_km → 0.0694</li></ul>
+                <br><br>
+                <li>
+                    Do ponto de vista de negócio, o modelo atual é mais eficiente para
+                    <strong>confirmar entregas no prazo</strong>, mas ainda é limitado para
+                    <strong>antecipar atrasos</strong>, que são os eventos mais críticos.
+                </li>
+    
+            </ul>
+        </div>
+    
     </main>
 
 </body>
